@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Form } from "reactstrap";
+import { Input } from "reactstrap";
 
 const CustomInput = ({
   name,
@@ -28,7 +28,7 @@ const CustomInput = ({
         invalid={errors[name] && touched[name]}
       />
       {errors[name] && touched[name] && (
-        <span className="error">{errors[name]}</span>
+        <span className="error" style={{fontSize: 11, color: "red"}}>{errors[name]}</span>
       )}
     </div>
   );
