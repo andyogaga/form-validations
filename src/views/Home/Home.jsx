@@ -39,8 +39,9 @@ const formSchema = Yup.object().shape({
       "is-password",
       "Your password must have at least One Uppercase character, One Number, One special character and at least Six characters.",
       function(value) {
-        return /[0-9]/i.test(value);
-      }
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/.test(
+          value
+        )}
     ),
   confirmPassword: Yup.string()
     .required("Required!")
@@ -49,8 +50,12 @@ const formSchema = Yup.object().shape({
     }),
   expirationDate: Yup.string()
     .required("Required!")
-    .test("is-expirationDate", "Enter valid date as MM/YY", function(value) {
-      return /^[0-1]{1}[0-9]\//.test(value);
+    .test("is-expirationDate", "Enter valid date as MM/YY from ", function(
+      value
+    ) {
+      return /^(([0]{1}[0-9]{1})|([1]{1}[12]{1}))\/[912]{1}[0-9]{1}$/.test(
+        value
+      );
     }),
   pin: Yup.string()
     .required("Required!")
@@ -58,13 +63,12 @@ const formSchema = Yup.object().shape({
       "is-password",
       "Your PIN must be a number and maximum of four characters",
       function(value) {
-        return /[0-9]/i.test(value);
+        return /[0-9]{4}/i.test(value);
       }
     )
 });
 
 const Home = () => {
-
   const submit = values => {};
 
   const handleExpirationDateInput = (e, cb) => {
@@ -78,47 +82,45 @@ const Home = () => {
     }
   };
 
-  const handlePINKeyInput = (e) => {
-    const {key, target: {value}} = e;
-    const ALLOWED_KEYS = [
-      "Backspace",
-      "Delete",
-      "ArrowRight",
-      "ArrowLeft"
-    ];
+  const handlePINKeyInput = e => {
+    const {
+      key,
+      target: { value }
+    } = e;
+    const ALLOWED_KEYS = ["Backspace", "Delete", "ArrowRight", "ArrowLeft"];
     const isControlKey = ALLOWED_KEYS.includes(key);
     const isNumberKey = /[0-9]/.test(key);
-    if(!isControlKey && !isNumberKey){
+    if (!isControlKey && !isNumberKey) {
       e.preventDefault();
       return;
     }
-    if(value.length >= 4 && !isControlKey){
+    if (value.length >= 4 && !isControlKey) {
       e.preventDefault();
       return;
     }
-  }
+  };
 
-  const handleExpirationDateKeyInput = (e) => {
-    const {key, target: {value}} = e;
-    const ALLOWED_KEYS = [
-      "Backspace",
-      "Delete"
-    ];
+  const handleExpirationDateKeyInput = e => {
+    const {
+      key,
+      target: { value }
+    } = e;
+    const ALLOWED_KEYS = ["Backspace", "Delete"];
     const isControlKey = ALLOWED_KEYS.includes(key);
     const isNumberKey = /[0-9]/.test(key);
-    if(!isControlKey && !isNumberKey){
+    if (!isControlKey && !isNumberKey) {
       e.preventDefault();
       return;
     }
-    if(value.length === 2 && !isControlKey){
-      e.target.value = `${value}/`
+    if (value.length === 2 && !isControlKey) {
+      e.target.value = `${value}/`;
       return;
     }
-    if(value.length >= 5 && !isControlKey){
+    if (value.length >= 5 && !isControlKey) {
       e.preventDefault();
       return;
     }
-  }
+  };
 
   return (
     <Container>
@@ -206,7 +208,7 @@ const Home = () => {
                   </div>
                 </Col>
                 <Col>
-                <div className="form-group">
+                  <div className="form-group">
                     <label htmlFor={"pin"}>PIN</label>
                     <Input
                       name={"pin"}
@@ -219,10 +221,7 @@ const Home = () => {
                       onBlur={rest.handleBlur}
                       autoComplete="off"
                       required={true}
-                      invalid={
-                        rest.errors.pin &&
-                        rest.touched.pin
-                      }
+                      invalid={rest.errors.pin && rest.touched.pin}
                     />
                     {rest.errors.pin && rest.touched.pin && (
                       <span
