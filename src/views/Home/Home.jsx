@@ -41,7 +41,8 @@ const formSchema = Yup.object().shape({
       function(value) {
         return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/.test(
           value
-        )}
+        );
+      }
     ),
   confirmPassword: Yup.string()
     .required("Required!")
@@ -67,6 +68,21 @@ const formSchema = Yup.object().shape({
       }
     )
 });
+
+const splitText = (txt, n) => {
+  const arrayedText = txt.split("");
+  let finalText = "";
+  let index = 0;
+  while (index <= arrayedText.length) {
+    let smallArray = arrayedText.slice(index, index + n);
+    const partitionedText =
+      finalText.length <= 15
+        ? `${smallArray.join("")} `
+        : `${smallArray.join("")}`;
+    finalText += partitionedText;
+    index += n;
+  }
+};
 
 const Home = () => {
   const submit = values => {};
@@ -101,6 +117,29 @@ const Home = () => {
   };
 
   const handleExpirationDateKeyInput = e => {
+    const {
+      key,
+      target: { value }
+    } = e;
+    const ALLOWED_KEYS = ["Backspace", "Delete", "ArrowRight", "ArrowLeft"];
+    const isControlKey = ALLOWED_KEYS.includes(key);
+    const isNumberKey = /[0-9]/.test(key);
+    const arrangedNumbers = values.split("");
+    if (!isControlKey && !isNumberKey) {
+      e.preventDefault();
+      return;
+    }
+    if (value.length === 2 && !isControlKey) {
+      e.target.value = `${value}/`;
+      return;
+    }
+    if (value.length >= 5 && !isControlKey) {
+      e.preventDefault();
+      return;
+    }
+  };
+
+  const handleCardNumberKeyInput = e => {
     const {
       key,
       target: { value }
