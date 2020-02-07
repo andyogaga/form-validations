@@ -200,7 +200,7 @@ const Home = () => {
         <Jumbotron className="light">
           <h1 className="display-3">Validations</h1>
           <p className="lead">
-          This application serves to validate different forms.
+            This application serves to validate different forms.
           </p>
         </Jumbotron>
         <br />
@@ -304,7 +304,11 @@ const Home = () => {
                   Object.keys(rest.touched).length !== 7
                 }
               >
-                Submit
+                {isSubmitting ||
+                !isValid ||
+                Object.keys(rest.touched).length !== 7
+                  ? "Complete the form to Submit"
+                  : "Submit"}
               </Button>
             </Form>
           )}
