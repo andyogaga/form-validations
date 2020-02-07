@@ -21,7 +21,7 @@ describe("Home Tests", () => {
   });
 
   it("should show errors when the fields are touched but empty", async () => {
-    const { queryByLabelText, queryAllByText, debug } = render(<Home />);
+    const { queryByLabelText, queryAllByText } = render(<Home />);
     const fullNameInput = queryByLabelText("Full name");
     const emailInput = queryByLabelText("Email");
     const phoneInput = queryByLabelText("Phone number");
