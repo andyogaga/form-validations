@@ -106,18 +106,117 @@ describe("Home Tests", () => {
     });
   });
 
-  it("should confirm that the email was entered correctly", async () => {
-    const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
-    const emailInput = queryByLabelText("Email");
-    fireEvent.change(emailInput, {
-      target: { value: "test@email.com" }
+  it("should not accept incorrect phone", async () => {
+    const { queryByLabelText, queryByTestId, queryByText, rerender} = render(<Home />);
+    const phoneInput = queryByLabelText("Phone number");
+    // Testing for lesser number of letters
+    fireEvent.change(phoneInput, {
+      target: { value: "0804534569" }
     });
-    fireEvent.blur(emailInput);
+    fireEvent.blur(phoneInput);
+    const phoneError = await waitForElement(() => queryByTestId("phone-error"));
     await wait(() => {
-      const emailError = queryByTestId("email-error");
-      expect(emailError).toBeNull();
+      expect(phoneError.textContent).toBe("Your Phone number must have 11 Digits");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+    rerender(<Home />);
+    // Testing for more number of digits
+    fireEvent.change(phoneInput, {
+      target: { value: "080453456956" }
+    });
+    fireEvent.blur(phoneInput);
+    const phoneError2 = await waitForElement(() => queryByTestId("phone-error"));
+    await wait(() => {
+      expect(phoneError2.textContent).toBe("Your Phone number must have 11 Digits");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+
+    rerender(<Home />);
+    // Testing for invalid Nigerian phone number
+    fireEvent.change(phoneInput, {
+      target: { value: "02045345695" }
+    });
+    fireEvent.blur(phoneInput);
+    const phoneError3 = await waitForElement(() => queryByTestId("phone-error"));
+    await wait(() => {
+      expect(phoneError3.textContent).toBe("Please enter valid phone number");
       const submitButton = queryByText("Complete the form to Submit");
       expect(submitButton).not.toBeNull();
     });
   });
+
+  it("should confirm that the phone was entered correctly", async () => {
+    const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
+    const phoneInput = queryByLabelText("Phone number");
+    fireEvent.change(phoneInput, {
+      target: { value: "07012345678" }
+    });
+    fireEvent.blur(phoneInput);
+    await wait(() => {
+      const phoneError = queryByTestId("phone-error");
+      expect(phoneError).toBeNull();
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
+
+  it("should not accept incorrect password", async () => {
+    const { queryByLabelText, queryByTestId, queryByText, rerender} = render(<Home />);
+    const passwordInput = queryByLabelText("Password");
+    // Testing for password with less than 6 characters
+    fireEvent.change(passwordInput, {
+      target: { value: "Pass" }
+    });
+    fireEvent.blur(passwordInput);
+    const passwordError = await waitForElement(() => queryByTestId("password-error"));
+    await wait(() => {
+      expect(passwordError.textContent).toBe("Your password is too short");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+    rerender(<Home />);
+    // Testing for no uppercase in password
+    fireEvent.change(passwordInput, {
+      target: { value: "password" }
+    });
+    fireEvent.blur(passwordInput);
+    const passwordError2 = await waitForElement(() => queryByTestId("password-error"));
+    await wait(() => {
+      expect(passwordError2.textContent).toBe("Your password must have at least One Uppercase character, One Number, One special character and at least Six characters.");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+
+    rerender(<Home />);
+    // Testing without special character
+    fireEvent.change(passwordInput, {
+      target: { value: "Pass1234" }
+    });
+    fireEvent.blur(passwordInput);
+    const passwordError3 = await waitForElement(() => queryByTestId("password-error"));
+    await wait(() => {
+      expect(passwordError3.textContent).toBe("Your password must have at least One Uppercase character, One Number, One special character and at least Six characters.");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
+  it("should confirm that the password was entered correctly", async () => {
+    const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
+    const passwordInput = queryByLabelText("Password");
+    fireEvent.change(passwordInput, {
+      target: { value: "Pass123*" }
+    });
+    fireEvent.blur(passwordInput);
+    await wait(() => {
+      const passwordError = queryByTestId("password-error");
+      expect(passwordError).toBeNull();
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
 });

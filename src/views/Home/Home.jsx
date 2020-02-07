@@ -37,6 +37,7 @@ const formSchema = Yup.object().shape({
     }),
   password: Yup.string()
     .required("Required!")
+    .min(6, "Your password is too short")
     .test(
       "is-password",
       "Your password must have at least One Uppercase character, One Number, One special character and at least Six characters.",
