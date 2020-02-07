@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Col, Form, Row, Button } from "reactstrap";
+import { Container, Col, Form, Row, Button, Jumbotron } from "reactstrap";
 import { Formik } from "formik";
 import CustomInput from "../../components/CustomInput";
 import * as Yup from "yup";
@@ -196,6 +196,14 @@ const Home = () => {
   return (
     <Container>
       <Col>
+        <br />
+        <Jumbotron className="light">
+          <h1 className="display-3">Validations</h1>
+          <p className="lead">
+          This application serves to validate different forms.
+          </p>
+        </Jumbotron>
+        <br />
         <Formik
           initialValues={initialValues}
           onSubmit={submit}
