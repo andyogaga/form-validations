@@ -5,7 +5,8 @@ const CustomInput = ({
   name,
   placeholder,
   label,
-  value,
+  values,
+  onKeyDown = () => {},
   handleChange,
   handleBlur,
   required = false,
@@ -21,11 +22,12 @@ const CustomInput = ({
         id={name}
         placeholder={placeholder}
         type={type}
-        value={value}
+        value={values[name]}
         onChange={handleChange}
         onBlur={handleBlur}
         required={required}
         invalid={errors[name] && touched[name]}
+        onKeyDown={onKeyDown}
       />
       {errors[name] && touched[name] && (
         <span className="error" style={{fontSize: 11, color: "red"}}>{errors[name]}</span>

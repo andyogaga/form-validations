@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Col, Form, Row, Input } from "reactstrap";
+import { Container, Col, Form, Row, Button } from "reactstrap";
 import { Formik } from "formik";
 import CustomInput from "../../components/CustomInput";
 import * as Yup from "yup";
@@ -30,6 +30,8 @@ const formSchema = Yup.object().shape({
     }),
   phone: Yup.string()
     .required("Required!")
+    .min(11, "Your Phone number must have 11 Digits")
+    .max(11, "Your Phone number must have 11 Digits")
     .test("is-phone", "Please enter valid phone number", function(value) {
       return /^([0]{1}[7-9]{1}[0-1]{1})([0-9]{8})$/.test(value);
     }),
@@ -49,17 +51,40 @@ const formSchema = Yup.object().shape({
     .test("is-same", "Must be equal to Password", function(value) {
       return this.parent.password === value;
     }),
+  cardNumber: Yup.string()
+    .required("Required!")
+    .min(
+      19,
+      "This Card number is invalid, please use format XXXX XXXX XXXX XXXX"
+    )
+    .max(
+      19,
+      "This Card number is invalid, please use format XXXX XXXX XXXX XXXX"
+    )
+    .test(
+      "is-cardNumber",
+      "Please enter a valid Card Number of format XXXX XXXX XXXX XXXX",
+      function(value) {
+        return /^(([0-9]{4})\s{1}([0-9]{4})\s{1}([0-9]{4})\s{1}([0-9]{4}))$/.test(
+          value
+        );
+      }
+    ),
   expirationDate: Yup.string()
     .required("Required!")
-    .test("is-expirationDate", "Enter valid date as MM/YY from ", function(
-      value
-    ) {
-      return /^(([0]{1}[0-9]{1})|([1]{1}[12]{1}))\/[912]{1}[0-9]{1}$/.test(
-        value
-      );
-    }),
+    .test(
+      "is-expirationDate",
+      "Enter valid date as MM/YY from 1990 - 2029",
+      function(value) {
+        return /^(([0]{1}[0-9]{1})|([1]{1}[12]{1}))\/[912]{1}[0-9]{1}$/.test(
+          value
+        );
+      }
+    ),
   pin: Yup.string()
     .required("Required!")
+    .min(4, "Your PIN must be 4 Digits")
+    .max(4, "Your PIN must be 4 Digits")
     .test(
       "is-password",
       "Your PIN must be a number and maximum of four characters",
@@ -69,34 +94,22 @@ const formSchema = Yup.object().shape({
     )
 });
 
-const splitText = (txt, n) => {
-  const arrayedText = txt.split("");
-  let finalText = "";
-  let index = 0;
-  while (index <= arrayedText.length) {
-    let smallArray = arrayedText.slice(index, index + n);
-    const partitionedText =
-      finalText.length <= 15
-        ? `${smallArray.join("")} `
-        : `${smallArray.join("")}`;
-    finalText += partitionedText;
-    index += n;
-  }
+const splitText = (prev, newKey, n) => {
+  const filteredText = prev
+    .split("")
+    .filter(t => t !== " ")
+    .join("");
+
+  const keyToUse =
+    (filteredText.length + 1) % n === 0 && filteredText.length <= 14
+      ? `${newKey} `
+      : newKey;
+  let finalText = prev + keyToUse;
+  return finalText;
 };
 
 const Home = () => {
   const submit = values => {};
-
-  const handleExpirationDateInput = (e, cb) => {
-    let { value } = e.target;
-    if (value.length < 6) {
-      if (value.length === 2) {
-        value = /^[0-9]{2}/.test(value) ? `${value}/` : value;
-      }
-      e.target.value = value;
-      cb(e);
-    }
-  };
 
   const handlePINKeyInput = e => {
     const {
@@ -116,7 +129,7 @@ const Home = () => {
     }
   };
 
-  const handleExpirationDateKeyInput = e => {
+  const handleExpirationDateKeyInput = (e, cb) => {
     const {
       key,
       target: { value }
@@ -124,22 +137,45 @@ const Home = () => {
     const ALLOWED_KEYS = ["Backspace", "Delete", "ArrowRight", "ArrowLeft"];
     const isControlKey = ALLOWED_KEYS.includes(key);
     const isNumberKey = /[0-9]/.test(key);
-    const arrangedNumbers = values.split("");
     if (!isControlKey && !isNumberKey) {
       e.preventDefault();
-      return;
-    }
-    if (value.length === 2 && !isControlKey) {
-      e.target.value = `${value}/`;
       return;
     }
     if (value.length >= 5 && !isControlKey) {
       e.preventDefault();
       return;
     }
+    if (value.length === 2 && !isControlKey) {
+      cb("expirationDate", `${value}/`);
+      return;
+    }
   };
 
-  const handleCardNumberKeyInput = e => {
+  const handleCardNumberKeyInput = (e, cb) => {
+    const {
+      key,
+      target: { value }
+    } = e;
+    const ALLOWED_KEYS = ["Backspace", "Delete", " "];
+    const isControlKey = ALLOWED_KEYS.includes(key);
+    const isNumberKey = /[0-9]/.test(key);
+    if (!isControlKey && !isNumberKey) {
+      e.preventDefault();
+      return;
+    }
+    if (value.length >= 19 && !isControlKey) {
+      e.preventDefault();
+      return;
+    }
+    if (isNumberKey) {
+      e.preventDefault();
+      const newValue = splitText(value, key, 4);
+      cb("cardNumber", newValue);
+      return;
+    }
+  };
+
+  const handlePhoneKeyInput = e => {
     const {
       key,
       target: { value }
@@ -151,11 +187,7 @@ const Home = () => {
       e.preventDefault();
       return;
     }
-    if (value.length === 2 && !isControlKey) {
-      e.target.value = `${value}/`;
-      return;
-    }
-    if (value.length >= 5 && !isControlKey) {
+    if (value.length >= 11 && !isControlKey) {
       e.preventDefault();
       return;
     }
@@ -169,7 +201,7 @@ const Home = () => {
           onSubmit={submit}
           validationSchema={formSchema}
         >
-          {({ isSubmitting, ...rest }) => (
+          {({ isSubmitting, setFieldValue, isValid, ...rest }) => (
             <Form noValidate>
               <CustomInput
                 {...rest}
@@ -194,6 +226,7 @@ const Home = () => {
                 placeholder="08112345678"
                 label="Phone number"
                 required={true}
+                onKeyDown={handlePhoneKeyInput}
               />
               <Row>
                 <Col>
@@ -201,6 +234,7 @@ const Home = () => {
                     {...rest}
                     name="password"
                     id="password"
+                    type="password"
                     placeholder="******"
                     label="Password"
                     required={true}
@@ -211,68 +245,59 @@ const Home = () => {
                     {...rest}
                     name="confirmPassword"
                     id="confirmPassword"
+                    type="password"
                     placeholder="******"
                     label="Confirm Password"
                     required={true}
                   />
                 </Col>
               </Row>
+              <CustomInput
+                {...rest}
+                name="cardNumber"
+                id="cardNumber"
+                placeholder="XXXX XXXX XXXX XXXX"
+                label="Card Number"
+                required={true}
+                onKeyDown={e => handleCardNumberKeyInput(e, setFieldValue)}
+              />
               <Row>
                 <Col>
-                  <div className="form-group">
-                    <label htmlFor={"expirationDate"}>Expiration Date</label>
-                    <Input
-                      name={"expirationDate"}
-                      id={"expirationDate"}
-                      placeholder="MM/YY"
-                      type="text"
-                      value={rest.values.expirationDate}
-                      onKeyDown={handleExpirationDateKeyInput}
-                      onChange={rest.handleChange}
-                      onBlur={rest.handleBlur}
-                      required={true}
-                      invalid={
-                        rest.errors.expirationDate &&
-                        rest.touched.expirationDate
-                      }
-                    />
-                    {rest.errors.expirationDate && rest.touched.expirationDate && (
-                      <span
-                        className="error"
-                        style={{ fontSize: 11, color: "red" }}
-                      >
-                        {rest.errors.expirationDate}
-                      </span>
-                    )}
-                  </div>
+                  <CustomInput
+                    {...rest}
+                    name="expirationDate"
+                    id="expirationDate"
+                    placeholder="MM/YY"
+                    label="Expiration Date"
+                    required={true}
+                    onKeyDown={e =>
+                      handleExpirationDateKeyInput(e, setFieldValue)
+                    }
+                  />
                 </Col>
                 <Col>
-                  <div className="form-group">
-                    <label htmlFor={"pin"}>PIN</label>
-                    <Input
-                      name={"pin"}
-                      id={"pin"}
-                      placeholder="****"
-                      type="password"
-                      value={rest.values.pin}
-                      onChange={rest.handleChange}
-                      onKeyDown={handlePINKeyInput}
-                      onBlur={rest.handleBlur}
-                      autoComplete="off"
-                      required={true}
-                      invalid={rest.errors.pin && rest.touched.pin}
-                    />
-                    {rest.errors.pin && rest.touched.pin && (
-                      <span
-                        className="error"
-                        style={{ fontSize: 11, color: "red" }}
-                      >
-                        {rest.errors.pin}
-                      </span>
-                    )}
-                  </div>
+                  <CustomInput
+                    {...rest}
+                    name="pin"
+                    id="pin"
+                    placeholder="****"
+                    label="PIN"
+                    required={true}
+                    type="password"
+                    onKeyDown={handlePINKeyInput}
+                  />
                 </Col>
               </Row>
+              <Button
+                className="btn-success"
+                disabled={
+                  isSubmitting ||
+                  !isValid ||
+                  Object.keys(rest.touched).length !== 7
+                }
+              >
+                Submit
+              </Button>
             </Form>
           )}
         </Formik>
