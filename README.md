@@ -25,3 +25,6 @@ This application serves to validate different forms such as:
  - PIN - 4 Digits enforced
 
  This makes extensive use of Regular Expressions for validations and Formik functions to achieve this feat.
+```
+
+# Installation Procedure
