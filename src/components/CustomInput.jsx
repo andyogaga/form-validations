@@ -12,7 +12,8 @@ const CustomInput = ({
   required = false,
   errors,
   touched,
-  type = "text"
+  type = "text",
+  isSubmitting
 }) => {
   return (
     <div className="form-group">
@@ -28,6 +29,7 @@ const CustomInput = ({
         required={required}
         invalid={errors[name] && touched[name]}
         onKeyDown={onKeyDown}
+        disabled={isSubmitting}
       />
       {errors[name] && touched[name] && (
         <span className="error" style={{fontSize: 11, color: "red"}}>{errors[name]}</span>

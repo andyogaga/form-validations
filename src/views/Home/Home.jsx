@@ -209,7 +209,7 @@ const Home = () => {
           onSubmit={submit}
           validationSchema={formSchema}
         >
-          {({ isSubmitting, setFieldValue, isValid, ...rest }) => (
+          {({ setFieldValue, isValid, ...rest }) => (
             <Form noValidate>
               <CustomInput
                 {...rest}
@@ -299,12 +299,12 @@ const Home = () => {
               <Button
                 className="btn-success"
                 disabled={
-                  isSubmitting ||
+                  rest.isSubmitting ||
                   !isValid ||
                   Object.keys(rest.touched).length !== 7
                 }
               >
-                {isSubmitting ||
+                {rest.isSubmitting ||
                 !isValid ||
                 Object.keys(rest.touched).length !== 7
                   ? "Complete the form to Submit"
