@@ -32,7 +32,7 @@ const CustomInput = ({
         disabled={isSubmitting}
       />
       {errors[name] && touched[name] && (
-        <span className="error" style={{fontSize: 11, color: "red"}}>{errors[name]}</span>
+        <span className="error" data-testid={`${name}-error`} style={{fontSize: 11, color: "red"}}>{errors[name]}</span>
       )}
     </div>
   );

@@ -7,12 +7,6 @@ import {
 import React from "react";
 import Home from "../HomeContainer";
 
-// Test cases
-/**
- * that the page renders with disabled button
- * that no error shows on page render
- */
-
 describe("Home Tests", () => {
   it("should load the document to the DOM with a disabled button", () => {
     const { queryByText } = render(<Home />);
@@ -48,12 +42,33 @@ describe("Home Tests", () => {
 
     await wait(() => {
       const emptyErrors = queryAllByText("Required!");
-      expect(emptyErrors.length).toBe(8)
+      expect(emptyErrors.length).toBe(8);
     });
   });
 
-  it("should confirm that the first name and last name was entered", () => {
-    const { queryByLabelText, queryAllByText, debug } = render(<Home />);
-   
-  })
+  it("should not accept only one name", async () => {
+    const { queryByLabelText, queryByTestId } = render(<Home />);
+    const fullNameInput = queryByLabelText("Full name");
+    fireEvent.change(fullNameInput, {
+      target: { value: "Andy" }
+    });
+    fireEvent.blur(fullNameInput);
+    const nameError = await waitForElement(() => queryByTestId("name-error"));
+    await wait(() => {
+      expect(nameError.textContent).toBe("Please enter your full name")
+    });
+  });
+
+  it("should confirm that the first name and last name was entered correctly", async () => {
+    const { queryByLabelText, queryByTestId } = render(<Home />);
+    const fullNameInput = queryByLabelText("Full name");
+    fireEvent.change(fullNameInput, {
+      target: { value: "Andy Ogaga" }
+    });
+    fireEvent.blur(fullNameInput);
+    await wait(() => {
+      const nameError = queryByTestId("name-error")
+      expect(nameError).toBeNull()
+    });
+  });
 });

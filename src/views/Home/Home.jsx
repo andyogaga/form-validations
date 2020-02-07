@@ -301,12 +301,12 @@ const Home = () => {
                 disabled={
                   rest.isSubmitting ||
                   !isValid ||
-                  Object.keys(rest.touched).length !== 7
+                  Object.keys(rest.touched).length !== 8
                 }
               >
                 {rest.isSubmitting ||
                 !isValid ||
-                Object.keys(rest.touched).length !== 7
+                Object.keys(rest.touched).length !== 8
                   ? "Complete the form to Submit"
                   : "Submit"}
               </Button>
