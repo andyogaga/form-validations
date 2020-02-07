@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import { Route, Switch, Redirect, Router } from "react-router-dom";
 import { createBrowserHistory } from 'history'
 import Home from "./views/Home/HomeContainer";
@@ -13,8 +12,8 @@ function App() {
     <div className="App">
       <Router history={history}>
         <Switch>
-          <Route path="/home" component={Home} />
-          <Route path="/dashboard" component={Dashboard} />
+          <Route exact path="/home" component={Home} />
+          <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/" component={Home} />
           <Redirect to="/" />
         </Switch>
