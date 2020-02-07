@@ -28,3 +28,8 @@ This application serves to validate different forms such as:
 ```
 
 # Installation Procedure
+git clone <repo link>
+npm install
+
+# Tests Run
+npm test
