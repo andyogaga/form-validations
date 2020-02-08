@@ -88,7 +88,7 @@ const formSchema = Yup.object().shape({
     .max(4, "Your PIN must be 4 Digits")
     .test(
       "is-password",
-      "Your PIN must be a number and maximum of four characters",
+      "Your PIN must be a number and have four characters",
       function(value) {
         return /[0-9]{4}/i.test(value);
       }
@@ -110,7 +110,9 @@ const splitText = (prev, newKey, n) => {
 };
 
 const Home = () => {
-  const submit = values => {};
+  const submit = values => {
+    
+  };
 
   const handlePINKeyInput = e => {
     const {

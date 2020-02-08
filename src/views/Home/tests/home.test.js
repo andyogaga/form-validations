@@ -148,6 +148,38 @@ describe("Home Tests", () => {
     });
   });
 
+  it("should not accept non-digits in phone number on key down", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const phoneInput = queryByLabelText("Phone number");
+    fireEvent.keyDown(phoneInput, {
+      key: "A"
+    })
+    fireEvent.blur(phoneInput);
+    const phoneError = await waitForElement(() => queryByTestId("phone-error"));
+    await wait(() => {
+      expect(phoneError.textContent).toBe("Required!");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
+  it("should not accept any key when phone digits are 11", async () => {
+    const { queryByLabelText, queryByTestId, queryByText, debug} = render(<Home />);
+    const phoneInput = queryByLabelText("Phone number");
+    fireEvent.change(phoneInput, {
+      target: {value: "08012345678"}
+    })
+    fireEvent.keyDown(phoneInput, {
+       key: "4"
+    })
+    fireEvent.blur(phoneInput);
+    await wait(() => {
+      expect(phoneInput.value).toBe("08012345678");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
   it("should confirm that the phone was entered correctly", async () => {
     const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
     const phoneInput = queryByLabelText("Phone number");
@@ -261,7 +293,7 @@ describe("Home Tests", () => {
   });
 
   it("should not accept invalid Card Number", async () => {
-    const { queryByLabelText, queryByTestId, queryByText, rerender, debug} = render(<Home />);
+    const { queryByLabelText, queryByTestId, queryByText, rerender} = render(<Home />);
     const cardnumberInput = queryByLabelText("Card Number");
     // Test for shorter digits
     fireEvent.change(cardnumberInput, {
@@ -313,6 +345,38 @@ describe("Home Tests", () => {
     });
   });
 
+  it("should not accept non-digits in card number on key down", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const cardnumberInput = queryByLabelText("Card Number");
+    fireEvent.keyDown(cardnumberInput, {
+      key: "A"
+    })
+    fireEvent.blur(cardnumberInput);
+    const cardNumberError4 = await waitForElement(() => queryByTestId("cardNumber-error"));
+    await wait(() => {
+      expect(cardNumberError4.textContent).toBe("Required!");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
+  it("should add a whitespace in expiration date on key down after 4 digits", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const cardnumberInput = queryByLabelText("Card Number");
+    fireEvent.keyDown(cardnumberInput, {
+      target: {value: "204"},
+      key: "2"
+    })
+    fireEvent.blur(cardnumberInput);
+    const cardNumberError4 = await waitForElement(() => queryByTestId("cardNumber-error"));
+    await wait(() => {
+      expect(cardnumberInput.value).toBe("2042 ");
+      expect(cardNumberError4.textContent).toBe("This Card number is invalid, please use format XXXX XXXX XXXX XXXX");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
   it("should confirm that the Card Number was entered correctly", async () => {
     const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
     const cardNumberInput = queryByLabelText("Card Number");
@@ -328,4 +392,92 @@ describe("Home Tests", () => {
     });
   });
 
+  it("should not accept non-digits in expiration date on key down", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const expirationDateInput = queryByLabelText("Expiration Date");
+    fireEvent.keyDown(expirationDateInput, {
+      key: "A"
+    })
+    fireEvent.blur(expirationDateInput);
+    const expirationError = await waitForElement(() => queryByTestId("expirationDate-error"));
+    await wait(() => {
+      expect(expirationError.textContent).toBe("Required!");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
+  it("should add a / in expiration date on key down after 2 digits", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const expirationDateInput = queryByLabelText("Expiration Date");
+    fireEvent.keyDown(expirationDateInput, {
+      target: {value: "04"},
+      key: "2"
+    })
+    fireEvent.blur(expirationDateInput);
+    const expirationError = await waitForElement(() => queryByTestId("expirationDate-error"));
+    await wait(() => {
+      expect(expirationDateInput.value).toBe("04/");
+      expect(expirationError.textContent).toBe("Enter valid date as MM/YY from 1990 - 2029");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
+  it("should not accept non-digits in PIN on key down", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const pinInput = queryByLabelText("PIN");
+    fireEvent.keyDown(pinInput, {
+      key: "A"
+    })
+    fireEvent.blur(pinInput);
+    const pinError = await waitForElement(() => queryByTestId("pin-error"));
+    await wait(() => {
+      expect(pinError.textContent).toBe("Required!");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
+  it("should not validate PIN with characters not equal to 4", async () => {
+    const { queryByLabelText, queryByTestId, queryByText, rerender} = render(<Home />);
+    const pinInput = queryByLabelText("PIN");
+    fireEvent.change(pinInput, {
+      target: {value: "123"}
+    })
+    fireEvent.blur(pinInput);
+    const pinError = await waitForElement(() => queryByTestId("pin-error"));
+    await wait(() => {
+      expect(pinError.textContent).toBe("Your PIN must be 4 Digits");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+    // Test more than 4 characters
+    rerender(<Home />);
+    fireEvent.change(pinInput, {
+      target: {value: "12354"}
+    })
+    fireEvent.blur(pinInput);
+    const pinError2 = await waitForElement(() => queryByTestId("pin-error"));
+    await wait(() => {
+      expect(pinError2.textContent).toBe("Your PIN must be 4 Digits");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  })
+
+  it("should confirm that the PIN was entered correctly", async () => {
+    const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
+    const pinInput = queryByLabelText("PIN");
+    fireEvent.change(pinInput, {
+      target: { value: "1234" }
+    });
+    fireEvent.blur(pinInput);
+    await wait(() => {
+      const pinError = queryByTestId("pin-error");
+      expect(pinError).toBeNull();
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
 });
