@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react";
 import React from "react";
 import Home from "../HomeContainer";
+import Dashboard from "../../Dashboard/Dashboard";
 
 describe("Home Tests", () => {
   afterEach(cleanup);
@@ -214,6 +215,114 @@ describe("Home Tests", () => {
     await wait(() => {
       const passwordError = queryByTestId("password-error");
       expect(passwordError).toBeNull();
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
+  it("should not accept unequal confirm password", async () => {
+    const { queryByLabelText, queryByTestId, queryByText} = render(<Home />);
+    const confirmPasswordInput = queryByLabelText("Confirm Password");
+    const passwordInput = queryByLabelText("Password");
+    fireEvent.change(passwordInput, {
+      target: { value: "Pass123*" }
+    });
+    fireEvent.blur(passwordInput);
+    fireEvent.change(confirmPasswordInput, {
+      target: { value: "Pass1234" }
+    });
+    fireEvent.blur(confirmPasswordInput);
+    const passwordError = await waitForElement(() => queryByTestId("confirmPassword-error"));
+    await wait(() => {
+      expect(passwordError.textContent).toBe("Must be equal to Password");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
+  it("should confirm that the confirm password was entered correctly", async () => {
+    const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
+    const confirmPasswordInput = queryByLabelText("Confirm Password");
+    const passwordInput = queryByLabelText("Password");
+    fireEvent.change(passwordInput, {
+      target: { value: "Pass123*" }
+    });
+    fireEvent.blur(passwordInput);
+    fireEvent.change(confirmPasswordInput, {
+      target: { value: "Pass123*" }
+    });
+    fireEvent.blur(confirmPasswordInput);
+    await wait(() => {
+      const passwordError = queryByTestId("confirmPassword-error");
+      expect(passwordError).toBeNull();
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
+  it("should not accept invalid Card Number", async () => {
+    const { queryByLabelText, queryByTestId, queryByText, rerender, debug} = render(<Home />);
+    const cardnumberInput = queryByLabelText("Card Number");
+    // Test for shorter digits
+    fireEvent.change(cardnumberInput, {
+      target: { value: "1234 1234 1234 1" }
+    });
+    fireEvent.blur(cardnumberInput);
+    const cardNumberError = await waitForElement(() => queryByTestId("cardNumber-error"));
+    await wait(() => {
+      expect(cardNumberError.textContent).toBe("This Card number is invalid, please use format XXXX XXXX XXXX XXXX");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+    // Test for longer digits
+    rerender(<Home />);
+    fireEvent.change(cardnumberInput, {
+      target: { value: "1234 1234 1234 1123344" }
+    });
+    fireEvent.blur(cardnumberInput);
+    const cardNumberError2 = await waitForElement(() => queryByTestId("cardNumber-error"));
+    await wait(() => {
+      expect(cardNumberError2.textContent).toBe("This Card number is invalid, please use format XXXX XXXX XXXX XXXX");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+    // Test for invalid characters
+    rerender(<Home />);
+    fireEvent.change(cardnumberInput, {
+      target: { value: "1234 1*34 1E34 1123" }
+    });
+    fireEvent.blur(cardnumberInput);
+    const cardNumberError3 = await waitForElement(() => queryByTestId("cardNumber-error"));
+    await wait(() => {
+      expect(cardNumberError3.textContent).toBe("Please enter a valid Card Number of format XXXX XXXX XXXX XXXX");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+
+    // Test for characters without white spaces
+    rerender(<Home />);
+    fireEvent.change(cardnumberInput, {
+      target: { value: "12341234 1E34 1123 " }
+    });
+    fireEvent.blur(cardnumberInput);
+    const cardNumberError4 = await waitForElement(() => queryByTestId("cardNumber-error"));
+    await wait(() => {
+      expect(cardNumberError4.textContent).toBe("Please enter a valid Card Number of format XXXX XXXX XXXX XXXX");
+      const submitButton = queryByText("Complete the form to Submit");
+      expect(submitButton).not.toBeNull();
+    });
+  });
+
+  it("should confirm that the Card Number was entered correctly", async () => {
+    const { queryByLabelText, queryByTestId, queryByText } = render(<Home />);
+    const cardNumberInput = queryByLabelText("Card Number");
+    fireEvent.change(cardNumberInput, {
+      target: { value: "1234 1234 1234 1234" }
+    });
+    fireEvent.blur(cardNumberInput);
+    await wait(() => {
+      const cardNumberError = queryByTestId("cardNumber-error");
+      expect(cardNumberError).toBeNull();
       const submitButton = queryByText("Complete the form to Submit");
       expect(submitButton).not.toBeNull();
     });
