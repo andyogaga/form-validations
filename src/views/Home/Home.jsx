@@ -111,9 +111,11 @@ const splitText = (prev, newKey, n) => {
 };
 
 const Home = (props) => {
-  const submit = values => {
+  const submit = (values, {resetForm, setSubmitting}) => {
     const {history} = props;
     if(Object.keys(values).length === 8){
+      setSubmitting(false);
+      resetForm()
       history.push("/dashboard");
     }
   };
@@ -310,6 +312,7 @@ const Home = (props) => {
                   !isValid ||
                   Object.keys(rest.touched).length !== 8
                 }
+                onClick={rest.handleSubmit}
               >
                 {rest.isSubmitting ||
                 !isValid ||
