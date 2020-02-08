@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types'
 import { Container, Col, Form, Row, Button, Jumbotron } from "reactstrap";
 import { Formik } from "formik";
 import CustomInput from "../../components/CustomInput";
@@ -109,9 +110,12 @@ const splitText = (prev, newKey, n) => {
   return finalText;
 };
 
-const Home = () => {
+const Home = (props) => {
   const submit = values => {
-    
+    const {history} = props;
+    if(Object.keys(values).length === 8){
+      history.push("/dashboard");
+    }
   };
 
   const handlePINKeyInput = e => {
@@ -320,5 +324,17 @@ const Home = () => {
     </Container>
   );
 };
+
+Home.defaultProps = {
+  history: {
+    push: () => {}
+  }
+}
+
+Home.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func
+  })
+}
 
 export default Home;
