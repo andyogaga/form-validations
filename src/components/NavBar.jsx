@@ -20,12 +20,11 @@ const HomeNavbar = () => {
       <Navbar color="light" light expand="md">
         <NavbarBrand
           tag={() => (
-            <Link to="/">
               <Logo
                 style={{ cursor: "pointer", height: 62, width: 66 }}
                 alt="Brand logo"
+                data-testid="logo-svg"
               />
-            </Link>
           )}
         />
         <NavbarToggler onClick={toggleMobile} className="float-right" />
