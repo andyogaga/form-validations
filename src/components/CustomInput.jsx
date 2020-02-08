@@ -1,5 +1,6 @@
 import React from "react";
 import { Input } from "reactstrap";
+import PropTypes from 'prop-types';
 
 const CustomInput = ({
   name,
@@ -37,5 +38,35 @@ const CustomInput = ({
     </div>
   );
 };
+
+CustomInput.defaultProps = {
+  errors: {},
+  handleBlur: () => {},
+  handleChange: () => {},
+  isSubmitting: false,
+  label: "",
+  name: "",
+  onKeyDown: () => {},
+  placeholder: "",
+  required: false,
+  touched: {},
+  type: "",
+  values: {}
+}
+
+CustomInput.propTypes = {
+  errors: PropTypes.any,
+  handleBlur: PropTypes.func,
+  handleChange: PropTypes.func,
+  isSubmitting: PropTypes.bool,
+  label: PropTypes.string,
+  name: PropTypes.string,
+  onKeyDown: PropTypes.func,
+  placeholder: PropTypes.string,
+  required: PropTypes.bool,
+  touched: PropTypes.shape({}),
+  type: PropTypes.string,
+  values: PropTypes.shape({})
+}
 
 export default CustomInput;
