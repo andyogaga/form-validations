@@ -8,7 +8,7 @@ import {
   NavItem,
   NavLink
 } from "reactstrap";
-import { ReactComponent as Logo } from "../logo.svg";
+import Logo from "../assets/img/softcom-logo.png";
 
 const HomeNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,11 +19,12 @@ const HomeNavbar = () => {
       <Navbar color="light" light expand="md">
         <NavbarBrand
           tag={() => (
-              <Logo
-                style={{ cursor: "pointer", height: 62, width: 66 }}
-                alt="Brand logo"
-                data-testid="logo-svg"
-              />
+            <img
+              src={Logo}
+              style={{ cursor: "pointer", height: 62, width: 106 }}
+              alt="Brand logo"
+              data-testid="logo-svg"
+            />
           )}
         />
         <NavbarToggler onClick={toggleMobile} className="float-right" />
@@ -32,7 +33,9 @@ const HomeNavbar = () => {
             <NavItem>
               <NavLink href="/home">Home</NavLink>
             </NavItem>
-            <NavItem><NavLink href="/">Profile</NavLink></NavItem>
+            <NavItem>
+              <NavLink href="/">Profile</NavLink>
+            </NavItem>
           </Nav>
         </Collapse>
       </Navbar>
