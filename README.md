@@ -3,13 +3,6 @@ Quick Test of Frontend Application
 
 This is a reactjs Application.
 
-### Modules installed
-- [reactstrap](https://reactstrap.github.io/)
-- [formik](https://jaredpalmer.com/formik)
-- [yup](https://www.npmjs.com/package/yup)
-- [@testing-library](https://testing-library.com/docs/react-testing-library/intro)
-- [reactstrap](https://reactstrap.github.io/components)
-
 # Author
 Andrew Ogaga
 
@@ -29,15 +22,17 @@ This application serves to validate different forms such as:
 ```
 
 # Installation Procedure
+```
 git clone <repo link>
 npm install
-
+```
 # Tests Run
+```
 npm test
 npm test -- --coverage --watchAll
-
+```
 # Coverage Result
-
+```
 ---------------------|----------|----------|----------|----------|
 -------------------|
 File                 |  % Stmts | % Branch |  % Funcs |  % Lines |
@@ -65,3 +60,4 @@ Tests:       34 passed, 34 total
 Snapshots:   0 total
 Time:        5.145s
 Ran all test suites.
+```
