@@ -9,7 +9,6 @@ import React from "react";
 import { createMemoryHistory } from "history";
 import { MemoryRouter } from "react-router-dom";
 import Home from "../HomeContainer";
-import { renderWithRouter } from "../../../utils/test-utils";
 
 const history = createMemoryHistory();
 
