@@ -2,6 +2,10 @@ import React from "react";
 import { Input } from "reactstrap";
 import PropTypes from 'prop-types';
 
+/**
+ * 
+ * @param {object} param0 - destructuring things needed in the form field for clean code
+ */
 const CustomInput = ({
   name,
   placeholder,
@@ -32,7 +36,7 @@ const CustomInput = ({
         onKeyDown={onKeyDown}
         disabled={isSubmitting}
       />
-      {errors[name] && touched[name] && (
+      {errors[name] && touched[name] && (  // This is the error element to be shown if field is touched or does not pass the schema tests
         <span className="error" data-testid={`${name}-error`} style={{fontSize: 11, color: "red"}}>{errors[name]}</span>
       )}
     </div>
