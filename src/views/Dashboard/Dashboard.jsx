@@ -7,7 +7,6 @@ const Dashboard = () => {
   return (
     <div>
       <HomeNavbar />
-      <br />
       <Container>
         <DashboardTabs />
       </Container>
